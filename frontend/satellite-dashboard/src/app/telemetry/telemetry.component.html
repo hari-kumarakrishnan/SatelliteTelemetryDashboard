@@ -1,0 +1,12 @@
+<div class="telemetry-container">
+    <h2>Telemetry Data</h2>
+    <div *ngFor="let item of telemetryData" class="telemetry-item">
+      <p>Satellite ID: {{ item.satellite_id }}</p>
+      <p>Timestamp: {{ item.timestamp }}</p>
+      <p>Power Usage: {{ item.power_usage }}</p>
+      <p>Orbit (X, Y): ({{ item.orbit_x }}, {{ item.orbit_y }})</p>
+      <p>Temperature: {{ item.temperature }}</p>
+      <hr />
+    </div>
+</div>
+  

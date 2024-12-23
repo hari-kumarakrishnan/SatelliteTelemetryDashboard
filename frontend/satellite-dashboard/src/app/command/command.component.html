@@ -1,0 +1,43 @@
+<div class="command-container">
+    <h3>Send Satellite Command</h3>
+  
+    <div class="form-row">
+      <label for="satelliteId">Satellite ID:</label>
+      <input
+        type="number"
+        id="satelliteId"
+        [(ngModel)]="satelliteId"
+        placeholder="e.g. 1"
+      />
+    </div>
+  
+    <div class="form-row">
+      <label for="commandName">Command Name:</label>
+      <input
+        type="text"
+        id="commandName"
+        [(ngModel)]="commandName"
+        placeholder="e.g. ResetSystem"
+      />
+    </div>
+  
+    <div class="form-row">
+      <label for="commandPayload">Command Payload (JSON):</label>
+      <textarea
+        id="commandPayload"
+        [(ngModel)]="commandPayload"
+        placeholder='e.g. {"mode": "safe"}'
+        rows="3"
+      ></textarea>
+    </div>
+  
+    <div class="button-row">
+      <button (click)="sendCommand()">Send Command</button>
+      <button (click)="checkCommandStatus()">Check Status</button>
+    </div>
+  
+    <p class="status-text">
+      {{ commandStatus }}
+    </p>
+  </div>
+  

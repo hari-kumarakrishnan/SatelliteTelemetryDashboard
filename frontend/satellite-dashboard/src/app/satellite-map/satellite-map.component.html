@@ -1,0 +1,21 @@
+<!-- src/app/satellite-map/satellite-map.component.html -->
+
+<!-- Chart Container -->
+<div #chart class="chart-container"></div>
+
+<!-- Loading Spinner -->
+<div *ngIf="isLoading" class="loading-spinner">
+  Loading satellites...
+</div>
+
+<!-- No Results Message -->
+<div *ngIf="!isLoading && satellites.length === 0" class="no-results">
+  No satellites match your search and filter criteria.
+</div>
+
+<!-- Pagination Controls -->
+<div class="pagination-controls" *ngIf="!isLoading && satellites.length > 0">
+  <button class="btn btn-primary" (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+  <span>Page {{ currentPage }}</span>
+  <button class="btn btn-primary" (click)="nextPage()">Next</button>
+</div>

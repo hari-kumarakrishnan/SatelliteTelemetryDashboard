@@ -1,0 +1,41 @@
+.command-container {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    border-radius: 4px;
+    max-width: 400px;
+  }
+  
+  .form-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.75rem;
+  }
+  
+  .form-row label {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+  }
+  
+  .form-row input,
+  .form-row textarea {
+    padding: 0.5rem;
+    font-size: 1rem;
+  }
+  
+  .button-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+  
+  .button-row button {
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+  }
+  
+  .status-text {
+    margin-top: 1rem;
+    color: #555;
+    font-style: italic;
+  }
+  

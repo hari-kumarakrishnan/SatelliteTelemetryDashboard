@@ -1,0 +1,8 @@
+<div class="container">
+  <h1 style="text-align: center;">{{ title }}</h1>
+
+  <app-satellite-map [filters]="currentFilters"></app-satellite-map>
+  <app-satellite-search (filtersApplied)="onFiltersApplied($event)"></app-satellite-search>
+
+  <!-- Satellite Map Component -->
+</div>

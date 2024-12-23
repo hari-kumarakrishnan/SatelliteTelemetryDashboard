@@ -1,0 +1,27 @@
+/* src/app/app.component.css */
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+}
+
+.app-container h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+
+section {
+  background: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+section h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #333;
+}

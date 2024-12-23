@@ -1,0 +1,14 @@
+.telemetry-container {
+    background-color: #f0f0f0;
+    padding: 1rem;
+    border-radius: 4px;
+  }
+  
+  .telemetry-item {
+    margin-bottom: 1rem;
+  }
+  
+  .telemetry-item p {
+    margin: 0.25rem 0;
+  }
+  
