@@ -1,9 +1,20 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ElementRef,
+  ViewChild,
+  Input,
+  AfterViewInit,
+  OnChanges,
+  SimpleChanges
+} from '@angular/core';
 import * as d3 from 'd3';
-import { SatelliteService } from '../services/satellite.service';
-import { SatellitePosition } from '../models/satellite-position.model';
-import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
+import { CommonModule } from '@angular/common';
+
+import { SatelliteService } from '../services/satellite.service';
+import { SatellitePosition, OrbitPoint } from '../models/satellite-position.model';
 
 @Component({
   selector: 'app-satellite-map',
@@ -13,41 +24,37 @@ import { Subscription } from 'rxjs';
   imports: [CommonModule]
 })
 export class SatelliteMapComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
-  @Input() filters: any = {}; // Receives filters from AppComponent
+  @Input() filters: any = {};
   @ViewChild('chart', { static: true }) private chartContainer!: ElementRef;
 
-  private svg: any;
+  private svg: d3.Selection<SVGSVGElement, unknown, null, undefined> | undefined;
   private width = 960;
   private height = 600;
-  private projection: any;
-  private path: any;
-  private g: any;
-  private subscription!: Subscription;
-
+  private path!: d3.GeoPath<unknown, d3.GeoPermissibleObjects>;
+  private projection: d3.GeoProjection | undefined;
+  private g: d3.Selection<SVGGElement, unknown, null, undefined> | undefined;
   satellites: SatellitePosition[] = [];
-  isLoading: boolean = false;
-  isError: boolean = false;
-  errorMessage: string = '';
-
-  // Pagination
-  currentPage: number = 1;
-  pageSize: number = 100;
+  isLoading = false;
+  isError = false;
+  errorMessage = '';
+  currentPage = 1;
+  pageSize = 25;
+  private subscription!: Subscription;
 
   constructor(private satelliteService: SatelliteService) {}
 
   ngOnInit(): void {
-    // Initialization logic, if any
   }
 
   ngAfterViewInit(): void {
     this.createSvg();
     this.drawMap();
-    this.fetchAndDisplaySatellites(); // Fetch satellites after the map is drawn
+    this.fetchAndDisplaySatellites();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['filters'] && !changes['filters'].isFirstChange()) {
-      this.currentPage = 1; // Reset to first page when filters change
+      this.currentPage = 1;
       this.fetchAndDisplaySatellites();
     }
   }
@@ -58,16 +65,15 @@ export class SatelliteMapComponent implements OnInit, AfterViewInit, OnDestroy, 
     }
   }
 
-  /**
-   * Initializes the SVG canvas and D3 projection.
-   */
+
   private createSvg(): void {
     if (!this.chartContainer) {
       console.error('Chart container is undefined');
       return;
     }
 
-    this.svg = d3.select(this.chartContainer.nativeElement)
+    this.svg = d3
+      .select(this.chartContainer.nativeElement)
       .append('svg')
       .attr('width', this.width)
       .attr('height', this.height)
@@ -77,76 +83,76 @@ export class SatelliteMapComponent implements OnInit, AfterViewInit, OnDestroy, 
       .scale(150)
       .translate([this.width / 2, this.height / 1.5]);
 
-    this.path = d3.geoPath().projection(this.projection);
+    this.path = d3.geoPath<unknown, d3.GeoPermissibleObjects>()
+      .projection(this.projection);
 
     this.g = this.svg.append('g');
 
-    // Add zoom and pan functionality
     this.svg.call(
-      d3.zoom()
+      d3.zoom<SVGSVGElement, unknown>()
         .scaleExtent([1, 8])
-        .on('zoom', (event: any) => {
-          this.g.attr('transform', event.transform);
+        .on('zoom', (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
+          this.g?.attr('transform', event.transform.toString());
         })
     );
   }
 
-  /**
-   * Draws the world map using GeoJSON data.
-   */
   private drawMap(): void {
-    d3.json('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson')
-      .then((data: any) => {
+    d3.json<GeoJSON.FeatureCollection<GeoJSON.Geometry>>(
+      'https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson'
+    )
+      .then((data) => {
+        if (!data) {
+          console.error('No GeoJSON data loaded.');
+          return;
+        }
+
+        if (!this.g || !this.path) return;
         this.g
           .selectAll('path')
           .data(data.features)
           .enter()
           .append('path')
-          .attr('d', this.path)
+          .attr('d', (feature) => {
+            return this.path(feature) ?? '';
+          })
           .attr('fill', '#b8b8b8')
           .attr('stroke', '#fff');
       })
-      .catch((error) => {
+      .catch((error: any) => {
         console.error('Error loading map data:', error);
       });
   }
-
-  /**
-   * Fetches satellite data based on current filters and updates the map.
-   */
   private fetchAndDisplaySatellites(): void {
     this.isLoading = true;
     this.isError = false;
+    this.errorMessage = '';
 
-    this.satelliteService.getSatellites(this.filters, this.currentPage, this.pageSize).subscribe(
-      (data: SatellitePosition[]) => {
-        console.log('Satellites fetched:', data);
-        this.satellites = data;
-        this.updateSatellites(this.satellites);
-        this.isLoading = false;
-      },
-      (error: any) => {
-        console.error('Error fetching satellites:', error);
-        this.isLoading = false;
-        this.isError = true;
-        this.errorMessage = 'Failed to load satellites. Please try again later.';
-      }
-    );
+    this.subscription = this.satelliteService
+      .getSatellites(this.filters, this.currentPage, this.pageSize)
+      .subscribe(
+        (data: SatellitePosition[]) => {
+          console.log('Satellites fetched:', data);
+          this.satellites = data;
+          this.updateSatellites(data);
+          this.isLoading = false;
+        },
+        (error: any) => {
+          console.error('Error fetching satellites:', error);
+          this.isError = true;
+          this.errorMessage = 'Failed to load satellites. Please try again later.';
+          this.isLoading = false;
+        }
+      );
   }
 
-  /**
-   * Updates the satellite markers on the map.
-   */
   private updateSatellites(satellites: SatellitePosition[]): void {
-    if (!satellites) {
-      console.error('Satellites data is undefined');
+    if (!this.g || !this.projection) {
+      console.error('Map not ready or projection is undefined');
       return;
     }
-
-    // Remove existing satellites
     this.g.selectAll('.satellite').remove();
-
-    // Add satellites
+    this.g.selectAll('.orbit-path').remove();
     this.g
       .selectAll('.satellite')
       .data(satellites)
@@ -154,37 +160,86 @@ export class SatelliteMapComponent implements OnInit, AfterViewInit, OnDestroy, 
       .append('circle')
       .attr('class', 'satellite')
       .attr('cx', (d: SatellitePosition) => {
-        const coords = this.projection([d.longitude, d.latitude]);
-        return coords ? coords[0] : null;
+        const coords = this.projection!([d.longitude, d.latitude]);
+        return coords ? coords[0] : 0;
       })
       .attr('cy', (d: SatellitePosition) => {
-        const coords = this.projection([d.longitude, d.latitude]);
-        return coords ? coords[1] : null;
+        const coords = this.projection!([d.longitude, d.latitude]);
+        return coords ? coords[1] : 0;
       })
       .attr('r', 5)
       .attr('fill', 'red')
       .attr('stroke', '#fff')
       .attr('stroke-width', 1)
-      .append('title') // Tooltip
+      .append('title')
       .text(
         (d: SatellitePosition) =>
-          `Name: ${d.name}\nNORAD ID: ${d.norad_id}\nType: ${d.type || 'N/A'}\nMission: ${
+          `Name: ${d.name}\nNORAD: ${d.norad_id}\nType: ${d.type || 'N/A'}\nMission: ${
             d.mission_description || 'N/A'
-          }\nLatitude: ${d.latitude.toFixed(2)}°\nLongitude: ${d.longitude.toFixed(2)}°\nAltitude: ${d.altitude_km} km`
+          }\nLat: ${d.latitude.toFixed(2)}\nLon: ${d.longitude.toFixed(2)}\nAlt: ${d.altitude_km} km`
       );
+
+    satellites.forEach((sat) => {
+      if (sat.norad_id) {
+        this.satelliteService
+          .getSatelliteOrbit(sat.norad_id, 2, 10) 
+          .subscribe(
+            (orbitData: OrbitPoint[]) => {
+              this.drawOrbitPath(orbitData, sat.norad_id!);
+            },
+            (err: any) => {
+              console.error('Error fetching orbit data for NORAD:', sat.norad_id, err);
+            }
+          );
+      }
+    });
   }
 
-  /**
-   * Navigates to the next page of satellite data.
-   */
+  private drawOrbitPath(orbitData: OrbitPoint[], noradId: number): void {
+    if (!this.g || !this.projection) return;
+      const orbitCoords = orbitData.map((point) => {
+      const coords = this.projection!([point.longitude, point.latitude]);
+      return coords ? coords : [0, 0];
+    });
+  
+    const lineGenerator = d3.line<[number, number]>()
+      .x((d) => d[0])
+      .y((d) => d[1])
+      .curve(d3.curveBasis); 
+    const pathSelection = this.g
+      .append('path')
+      .datum(orbitCoords)
+      .attr('class', `orbit-path orbit-${noradId}`)
+      .attr('fill', 'none')
+      .attr('stroke', 'orange')
+      .attr('stroke-width', 2)
+      .attr('d', lineGenerator as any);
+  
+    const marker = this.g
+      .append('circle')
+      .attr('class', `orbit-marker orbit-${noradId}`)
+      .attr('r', 5)
+      .attr('fill', 'red');
+  
+    const totalLength = (pathSelection.node() as SVGPathElement).getTotalLength();
+    marker
+      .transition()
+      .duration(30000) 
+      .ease(d3.easeLinear)
+      .attrTween('transform', function () {
+        return function (t: number) {
+          const point = (pathSelection.node() as SVGPathElement)
+            .getPointAtLength(t * totalLength);
+          return `translate(${point.x}, ${point.y})`;
+        };
+      });
+  }
+  
   nextPage(): void {
     this.currentPage += 1;
     this.fetchAndDisplaySatellites();
   }
 
-  /**
-   * Navigates to the previous page of satellite data.
-   */
   previousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage -= 1;

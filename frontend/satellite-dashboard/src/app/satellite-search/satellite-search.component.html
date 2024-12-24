@@ -1,9 +1,7 @@
-<!-- src/app/satellite-search/satellite-search.component.html -->
 <div style="padding-top: 20px;">
   <div class="search-filter-container">
       <h3>Search and Filter Satellites</h3>
       <form #filterForm="ngForm">
-        <!-- Satellite Name -->
         <div class="form-group">
           <label for="name">Satellite Name:</label>
           <input
@@ -15,9 +13,7 @@
             placeholder="Enter satellite name"
             (input)="applyFilters()"
           />
-        </div>
-    
-        <!-- NORAD ID -->
+        </div>    
         <div class="form-group">
           <label for="norad_id">NORAD ID:</label>
           <input
@@ -29,9 +25,7 @@
             placeholder="Enter NORAD ID"
             (input)="applyFilters()"
           />
-        </div>
-    
-        <!-- Satellite Type -->
+        </div>    
         <div class="form-group" style="width: 98%;">
           <label for="type">Satellite Type:</label>
           <select
@@ -45,11 +39,8 @@
             <option value="Communication">Communication</option>
             <option value="Navigation">Navigation</option>
             <option value="Earth Observation">Earth Observation</option>
-            <!-- Add more types as needed -->
           </select>
-        </div>
-    
-        <!-- Mission Description -->
+        </div>    
         <div class="form-group">
           <label for="mission">Mission:</label>
           <input
@@ -61,9 +52,7 @@
             placeholder="Enter mission description"
             (input)="applyFilters()"
           />
-        </div>
-    
-        <!-- Altitude Range -->
+        </div>    
         <div class="form-group">
           <label>Altitude Range (km):</label>
           <div class="altitude-range">

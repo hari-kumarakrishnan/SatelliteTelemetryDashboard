@@ -1,5 +1,3 @@
-// src/app/websocket.service.ts
-
 import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 
@@ -7,8 +5,8 @@ import { Observable, Subject } from 'rxjs';
   providedIn: 'root',
 })
 export class WebsocketService implements OnDestroy {
-  private socket!: WebSocket; // Definite assignment assertion
-  private subject: Subject<any> = new Subject<any>(); // Initialized at declaration
+  private socket!: WebSocket; 
+  private subject: Subject<any> = new Subject<any>(); 
 
   constructor() {
     this.initializeWebSocketConnection();
@@ -38,11 +36,10 @@ export class WebsocketService implements OnDestroy {
     this.socket.onclose = (event) => {
       console.log('WebSocket connection closed:', event.reason);
       this.subject.complete();
-      // Optionally, implement reconnection logic here
     };
   }
 
-  public connectToWebSocket(): Observable<any> { // Renamed for clarity
+  public connectToWebSocket(): Observable<any> {
     return this.subject.asObservable();
   }
 

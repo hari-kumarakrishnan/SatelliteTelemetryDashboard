@@ -1,57 +1,64 @@
-/* src/app/satellite-map/satellite-map.component.css */
-
 .search-filter-container {
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
     margin-bottom: 20px;
     background-color: #f9f9f9;
-}
-
-.form-group {
+  }
+  
+  .form-group {
     margin-bottom: 15px;
-}
-
-.altitude-range {
+  }
+  
+  .altitude-range {
     display: flex;
     align-items: center;
-}
-
-.altitude-range input {
+  }
+  
+  .altitude-range input {
     width: 100px;
-}
-
-.altitude-range span {
+  }
+  
+  .altitude-range span {
     margin: 0 10px;
-}
-
-button {
+  }
+  
+  button {
     margin-right: 10px;
-}
-
-.chart-container {
+  }
+  
+  .chart-container {
     position: relative;
     width: 100%;
     max-width: 960px;
     height: 600px;
     margin: 0 auto;
     border: 1px solid #ccc;
-}
-
-.loading-spinner, .no-results {
+  }
+  
+  .loading-spinner,
+  .no-results {
     text-align: center;
     font-size: 1.2em;
     color: #555;
     margin-top: 20px;
-}
-
-.pagination-controls {
+  }
+  
+  .pagination-controls {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 20px;
-}
-
-.pagination-controls button {
+  }
+  
+  .pagination-controls button {
     margin: 0 10px;
-}
+  }
+  
+  .orbit-path {
+    fill: none;
+    stroke: orange;
+    stroke-width: 2;
+    opacity: 0.8;
+  }
+  

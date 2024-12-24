@@ -16,7 +16,7 @@ interface SatelliteFilters {
 @Component({
   selector: 'app-satellite-search',
   templateUrl: './satellite-search.component.html',
-  styleUrls: ['./satellite-search.component.css'], // Ensure this file exists
+  styleUrls: ['./satellite-search.component.css'], 
   standalone: true,
   imports: [CommonModule, FormsModule],
 })
@@ -29,7 +29,7 @@ export class SatelliteSearchComponent {
   constructor() {
     this.filtersSubject
       .pipe(
-        debounceTime(500), // Debounce for 500ms
+        debounceTime(500),
         distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr))
       )
       .subscribe((filters) => {
@@ -37,16 +37,10 @@ export class SatelliteSearchComponent {
       });
   }
 
-  /**
-   * Emits the current filters when inputs change.
-   */
   applyFilters(): void {
     this.filtersSubject.next(this.filters);
   }
 
-  /**
-   * Resets all filters and emits the empty filter object.
-   */
   resetFilters(): void {
     this.filters = {};
     this.filtersSubject.next(this.filters);

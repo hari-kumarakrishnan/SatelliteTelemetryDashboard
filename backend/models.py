@@ -1,13 +1,16 @@
-# models.py
-
 from pydantic import BaseModel
-from typing import Optional
 
 class SatellitePosition(BaseModel):
     name: str
-    norad_id: Optional[int] = None
-    type: Optional[str] = None
-    mission_description: Optional[str] = None
+    norad_id: int | None = None
+    type: str | None = None
+    mission_description: str | None = None
+    latitude: float
+    longitude: float
+    altitude_km: float
+
+class OrbitPoint(BaseModel):
+    timestamp: str  # ISO format
     latitude: float
     longitude: float
     altitude_km: float
